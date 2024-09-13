@@ -15,15 +15,15 @@ To run the pipeline, open your data folder with the output from suite2p and the 
 For instance, the input data from one recording will have 3 neurotar files from the 3 different environments, and one big suite2p file with all the data from each of the three recordings concatenated together.
 
 ## Contributors
-`Save_Data`, `plotOneD`, `plotDonutHeatmap`,`plotAllLapByLap`,`getExtractorInpt`, `NewNeurotarExtractor`, `colormapMaker`, 
-
-Nora Wolcott: `HPC_Analysis_Pipeline_Method3`, `DeConcatenateEnvironments_v2`, `PC_reliability_checker_WTR_v2`, `Moving_v3`, `Active_Cells`, `getLaps`, `suite2p2data`,
+Nora Wolcott: `HPC_Analysis_Pipeline_Method3`, `DeConcatenateEnvironments_v2`, `PC_reliability_checker_WTR_v2`, `Moving_v3`, `Active_Cells`, `getLaps`, `suite2p2data`, `Save_Data`, `plotOneD`, `plotDonutHeatmap`,`plotAllLapByLap`,`getExtractorInpt`, 
        
 Will Redman: `Spike_Max`, `Speed_Cells`, `SpatialInfoComputer`, `PC_reliability_checker_WTR_v2`, `OneD_Track_Anaysis_v2`, `Normalizer`, `Moving_v3`, `Active_Cells`, `DFF_transients`, `suite2p2data`,
 
-James Roney: `subroutine_test_r_HPC`, `subroutine_find_corr_HPC`, 
+Santi Acosta: `NewNeurotarExtractor`,
 
-Michael Goard: `PC_reliability_checker_WTR_v2`
+Kevin Sit: `colormapMaker`,
+
+James Roney: `subroutine_test_r_HPC`, `subroutine_find_corr_HPC`, 
 
 Pengcheng Zhou and ported from the Python implementation from Johannes Friedrich: `foopsi_oasisAR1`, `estimate_time_constant`, `deconvolveCa`, `GetSn`, `oasisAR1`,
 
