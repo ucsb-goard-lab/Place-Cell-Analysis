@@ -69,35 +69,38 @@ for ii = 1:ceil(length(valid_PCs)/25) % where 25 is # cells plotted per figure
 %         cell_resp = smoothed_array(valid_PCs(cell_count), :, :);
 %         cell_resp = squeeze(cell_resp)'; % array with DFF for one cell in each environment 
         [~,max_idx] = max(avg_cell_resp(1,:)); % location of max peak in env A
+
+        %% Uncomment to plot responses centered with respect to env.A
         %             centered_resp = zeros(num_envs,size(activity_binned_1D_smoothed{1,:}, 2)); % envs x bins
-        % [~,max_idx] = max(cell_resp(:,:,1)); % location of max peak in env A
+        %             [~,max_idx] = max(cell_resp(:,:,1)); % location of max peak in env A
         %             dist2shift = 36-max_idx; % distance you'd have to circularly shift the vector to center it
         %             for jj = 1:num_envs
         %                 single_cent_resp = circshift(cell_resp(:,:,jj),dist2shift); % shift 1D response the requisite distance
         %                 centered_resp(jj,:) = single_cent_resp; % put shifted vector into 2D array
         %             end
+        
+        %% Plot oneD responses
         for j = 1:num_envs
             subplot(5,5,plot_count) % total = 25 cells
             x = 1:n_bins;
             curr_resp = rescale(avg_cell_resp(j,:)); % cell response for current environment normalized from 0 to 1
-            rescale_factor = 0.5/max(avg_cell_resp(j,:));
-            curve1 = curr_resp-ste_cell_resp(j,:)*rescale_factor; % lower bound ste
-            curve2 = curr_resp+ste_cell_resp(j,:)*rescale_factor; % upper bound ste
-            a = plot(x, curve1, 'r', 'LineWidth', 2);
+            curve1 = curr_resp-ste_cell_resp(j,:); % lower bound ste
+            curve2 = curr_resp+ste_cell_resp(j,:); % upper bound ste
+            a = plot(x, curve1, 'r', 'LineWidth', 2.2);
             a.Color = color_opts_ste(j,:);
             hold on;
-            b = plot(x, curve2, 'b', 'LineWidth', 2);
+            b = plot(x, curve2, 'b', 'LineWidth', 2.2);
             b.Color = color_opts_ste(j,:);
-            x2 = [x, fliplr(x)];
+            x2 = [x, fliplr(x)]; % add fill for error bars
             inBetween = [curve1, fliplr(curve2)];
             fill(x2, inBetween, color_opts_ste(j,:));
             hold on
-            p = plot(x, curr_resp, 'LineWidth', 1.5);
+            p = plot(x, curr_resp, 'LineWidth', 1.6);
             p.Color = color_opts{j};
             if j == 1
-                xline(max_idx) % plot a vertical line in the middle of the plot, for centered: line at 36
+                xline(max_idx) % plot a vertical line at the peak response for env. A (for centered: line at 36)
                 title(strcat('Cell #',num2str(valid_PCs(cell_count)))); % plot cell # as subtitle
-                xlabel('bins')
+                xlabel('bin #')
                 ylabel('DFF')
             end
             hold on
