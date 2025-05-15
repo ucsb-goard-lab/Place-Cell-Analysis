@@ -86,6 +86,7 @@ for ii = 1:num_envs
         % 'Fall_N.mat'
         fall_fspec = 'Fall_%d.mat';
         fall_fname = sprintf(fall_fspec,ii);
+        fall_fname = 'Fall_2_1.mat';
         Fall_File = importdata(fall_fname);
     end
     data.DFF(Fall_File.iscell(:, 1) == 0, :) = []; % delete DFF traces and spikes from non-cells

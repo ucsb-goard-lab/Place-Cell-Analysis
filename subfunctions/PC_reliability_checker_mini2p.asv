@@ -1,0 +1,134 @@
+function [ PCs ] = PC_reliability_checker_mini2p(activity, bin_size, coords)
+%% PC_reliability_checker
+%-------------------------------------------------------------------------%
+%   This function finds cells that are significant under shuffling and have
+%   a response curve that is well described by a Gaussian.
+%
+%   Inputs:
+%   'activityMap' is a 3D array where each slice along the third dimension 
+%    contains the binned activity data.
+%   'save_flag' is a boolean flag indicating whether to save data to the 
+%    current directory. If 'save_flag' is not provided or empty, it defaults to 1 (true).
+%   'shuffle_data' is a boolean flag indicating whether to shuffle actual 
+%    data. If 'shuffle_data' is not provided or empty, it defaults to 0 (false).
+%
+%   Outputs:
+%   'PCs' is a vector of indices of the place cells.
+%   'FWHM' is a vector of the full width at half maximum (FWHM) of the 
+%    place cells.
+%   'params' is a structure containing the parameters used in the function.
+%
+%   Written by MJG 06/18/2021 // Last updated by NSW 06/01/2023
+%
+%   See also UIGETFILE, IMPORTDATA, RANDPERM, CORRCOEF, RANKSUM, FIT, MEAN, STD, SAVEAS.
+%-------------------------------------------------------------------------%
+% Parameters
+nShuffles = 1000;
+
+% Input:
+% coords [nFrames x 2], activity [nCells x nFrames]
+
+% Step 1: Set up bins
+x = coords(:,1);
+y = coords(:,2);
+nCells = size(activity, 1);
+nFrames = size(activity, 2);
+
+xEdges = floor(min(x)):bin_size:ceil(max(x));
+yEdges = floor(min(y)):bin_size:ceil(max(y));
+nBinsX = length(xEdges) - 1;
+nBinsY = length(yEdges) - 1;
+nBins = nBinsX * nBinsY;
+
+% Bin indices for each frame
+[~, ~, xBin] = histcounts(x, xEdges);
+[~, ~, yBin] = histcounts(y, yEdges);
+
+% Compute occupancy map
+occupancyMap = zeros(nBinsY, nBinsX);
+for i = 1:nFrames
+    xi = xBin(i);
+    yi = yBin(i);
+    if xi > 0 && yi > 0
+        occupancyMap(yi, xi) = occupancyMap(yi, xi) + 1;
+    end
+end
+
+% Normalize occupancy
+occupancyFlat = reshape(occupancyMap, [nBins, 1]);
+p_i = occupancyFlat / sum(occupancyFlat);
+
+% Precompute bin indices for fast access
+binIdx = zeros(nFrames, 1);
+for i = 1:nFrames
+    xi = xBin(i);
+    yi = yBin(i);
+    if xi > 0 && yi > 0
+        binIdx(i) = sub2ind([nBinsY, nBinsX], yi, xi);
+    else
+        binIdx(i) = 0; % invalid
+    end
+end
+
+% Step 2: Compute real spatial information
+activityFlat = zeros(nBins, nCells);
+
+for c = 1:nCells
+    tempMap = zeros(nBins, 1);
+    for i = 1:nFrames
+        b = binIdx(i);
+        if b > 0
+            tempMap(b) = tempMap(b) + activity(c, i);
+        end
+    end
+    % Normalize to occupancy
+    valid = occupancyFlat > 0;
+    r_i = zeros(nBins, 1);
+    r_i(valid) = tempMap(valid) ./ occupancyFlat(valid);
+    activityFlat(:, c) = r_i;
+end
+
+% Compute spatial information
+spatialInfo = zeros(1, nCells);
+for c = 1:nCells
+    r_i = activityFlat(:, c);
+    r_i(r_i == 0) = eps;
+    r_bar = sum(p_i .* r_i);
+    spatialInfo(c) = sum(p_i .* (r_i / r_bar) .* log2(r_i / r_bar));
+end
+
+% Step 3: Shuffle and compute null distribution
+shuffledSI = zeros(nShuffles, nCells);
+
+for s = 1:nShuffles
+    for c = 1:nCells
+        shift = randi(nFrames);
+        shuffled_trace = circshift(activity(c, :), [0 shift]);
+
+        tempMap = zeros(nBins, 1);
+        for i = 1:nFrames
+            b = binIdx(i);
+            if b > 0
+                tempMap(b) = tempMap(b) + shuffled_trace(i);
+            end
+        end
+
+        r_i = zeros(nBins, 1);
+        valid = occupancyFlat > 0;
+        r_i(valid) = tempMap(valid) ./ occupancyFlat(valid);
+        r_i(r_i == 0) = eps;
+
+        r_bar = sum(p_i .* r_i);
+        shuffledSI(s, c) = sum(p_i .* (r_i / r_bar) .* log2(r_i / r_bar));
+    end
+end
+
+% Step 4: Determine significance threshold
+thresholds = prctile(shuffledSI, 95);
+PCs = spatialInfo > thresholds;
+
+% Output
+fprintf('Identified %d place cells out of %d total cells.\n', sum(PCs), nCells);
+
+
+end
