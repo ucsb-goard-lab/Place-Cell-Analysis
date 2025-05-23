@@ -61,4 +61,16 @@ if move_flag
     data.spikes(:, not_moving_time) = [];
     data.raw_F(:, not_moving_time) = [];
     data.neuropil_F(:, not_moving_time) = [];
+
+
+    %% UNCOMMENT TO CUT FRAMES FOR TESTING
+    % frames2cut = round(.5*size(data.DFF,2));
+    % 
+    % coords(end-frames2cut:end,:) = [];
+    % 
+    % data.DFF(:, end-frames2cut:end) = [];
+    % data.DFF_raw(:, end-frames2cut:end) = [];
+    % data.spikes(:, end-frames2cut:end) = [];
+    % data.raw_F(:, end-frames2cut:end) = [];
+    % data.neuropil_F(:, end-frames2cut:end) = [];
 end
