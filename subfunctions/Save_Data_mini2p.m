@@ -13,5 +13,5 @@ end
 if length(m) == 1
     m = strcat('0',m);
 end
-save(strcat(y(3:end),m,d,'_processed_data.mat'), 'data'); % saves to file with current date (YYMMDD)
+save(strcat(y(3:end),m,d,'_processed_data_MoserCriteria.mat'), 'data'); % saves to file with current date (YYMMDD)
 disp('Done! Processed data saved to current directory.')

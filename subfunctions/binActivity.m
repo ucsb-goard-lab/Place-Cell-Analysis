@@ -69,14 +69,14 @@ for cellIdx = 1:N
 end
 
 
-nCells = size(activityMap, 3);  % number of cells
-
-for cellIdx = 1:nCells
-    imagesc(activityMap(:,:,cellIdx));
-    axis equal tight;
-    colorbar;
-    title(sprintf('Cell %d Activity Map', cellIdx));
-    
-    % Pause or wait for user input
-    pause(0.5);
-end
+% nCells = size(activityMap, 3);  % number of cells
+% 
+% for cellIdx = 1:nCells
+%     imagesc(activityMap(:,:,cellIdx));
+%     axis equal tight;
+%     colorbar;
+%     title(sprintf('Cell %d Activity Map', cellIdx));
+% 
+%     % Pause or wait for user input
+%     pause(0.5);
+% end
