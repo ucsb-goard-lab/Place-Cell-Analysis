@@ -25,7 +25,7 @@ for batchStart = 1:cellsPerFigure:nPlaceCells
         subplot(4, 5, i - batchStart + 1); % 4 rows x 5 cols layout
         
         % Apply Gaussian smoothing to each cell's heatmap
-        smoothedMap = imgaussfilt(activityMap(:,:,cellIndices(i)), sigma);
+        smoothedMap = nanGaussFilt2D(activityMap(:,:,cellIndices(i)), sigma);
 
         imagesc(smoothedMap);
         axis equal tight off;

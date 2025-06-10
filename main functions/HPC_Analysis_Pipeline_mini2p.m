@@ -48,7 +48,7 @@ likelihood = dlc.data(:,4); % likelihood
 
 %% Functions
 %   Here we'll have the different functions you can pass your data through.
-%   Run whichever ones suite your data.
+%   Run whichever ones suit your data.
 % ----------------------------------------------------------------------- %
 % Parameters
 bin_size = 131; % N x N bin size in pixels. 131 = 3cm
